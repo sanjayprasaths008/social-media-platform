@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Delagram{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+</head>
+<body>
+
+  <header class="site-nav">
+    <div class="nav-inner">
+      <a class="logo" href="{{ url_for('feed') }}"><span class="mark">&#8635;</span> delagram</a>
+      <nav class="nav-links">
+        <a class="btn btn-outline btn-sm" href="{{ url_for('people') }}">People</a>
+        {% if current_user.is_authenticated %}
+          <a class="btn btn-outline btn-sm" href="{{ url_for('profile', username=current_user.username) }}">Profile</a>
+          <span class="nav-user">@{{ current_user.username }}</span>
+          <a class="btn btn-sm" href="{{ url_for('logout') }}">Logout</a>
+        {% else %}
+          <a class="btn btn-outline btn-sm" href="{{ url_for('login') }}">Login</a>
+          <a class="btn btn-violet btn-sm" href="{{ url_for('register') }}">Sign Up</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="alerts">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+              <span>{{ message }}</span>
+              <button onclick="this.parentElement.style.display='none'">&times;</button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </div>
+
+  <footer>delagram</footer>
+
+</body>
+</html>

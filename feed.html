@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% import 'macros.html' as m with context %}
+{% block title %}LOOP — Feed{% endblock %}
+{% block content %}
+
+<div class="feed-header">
+  <span class="eyebrow"> Your delagram</span>
+  <h1>What's happening</h1>
+</div>
+
+{% if current_user.is_authenticated %}
+<form method="POST" action="{{ url_for('create_post') }}" class="compose">
+  <div class="avatar avatar-md {{ current_user.avatar_class }}">{{ current_user.username[0]|upper }}</div>
+  <div class="compose-body">
+    <textarea name="content" placeholder="Share something with your loop..." maxlength="500"></textarea>
+    <div class="compose-foot">
+      <button type="submit" class="btn btn-violet">Post</button>
+    </div>
+  </div>
+</form>
+{% else %}
+<div class="compose" style="align-items:center;">
+  <div class="compose-body" style="display:flex; justify-content:space-between; align-items:center;">
+    <span style="color:var(--muted); font-size:0.9rem;">Log in to post, like, and follow.</span>
+    <a href="{{ url_for('login') }}" class="btn btn-violet btn-sm">Login</a>
+  </div>
+</div>
+{% endif %}
+
+{% if posts %}
+  {% for post in posts %}
+    {{ m.post_card(post) }}
+  {% endfor %}
+{% else %}
+<div class="empty-state">
+  <h3>Nothing here yet</h3>
+  <p>Be the first to post something.</p>
+</div>
+{% endif %}
+
+{% endblock %}

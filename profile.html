@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% import 'macros.html' as m with context %}
+{% block title %}@{{ profile_user.username }} — LOOP{% endblock %}
+{% block content %}
+
+<div class="profile-cover"></div>
+
+<div class="profile-head">
+  <div class="avatar-ring {% if is_following(current_user, profile_user) %}following{% endif %}">
+    <div class="avatar avatar-lg {{ profile_user.avatar_class }}">{{ profile_user.username[0]|upper }}</div>
+  </div>
+  <div class="profile-info">
+    <h2>{{ profile_user.username }}</h2>
+    <span class="handle">@{{ profile_user.username }}</span>
+  </div>
+
+  {% if current_user.is_authenticated %}
+    {% if current_user.id == profile_user.id %}
+      <a href="{{ url_for('edit_profile') }}" class="btn btn-outline btn-sm">Edit profile</a>
+    {% else %}
+      <form method="POST" action="{{ url_for('toggle_follow', username=profile_user.username) }}">
+        {% if is_following(current_user, profile_user) %}
+          <button type="submit" class="btn btn-following btn-sm">Following</button>
+        {% else %}
+          <button type="submit" class="btn btn-violet btn-sm">Follow</button>
+        {% endif %}
+      </form>
+    {% endif %}
+  {% endif %}
+</div>
+
+{% if profile_user.bio %}
+<p class="profile-bio">{{ profile_user.bio }}</p>
+{% endif %}
+
+<div class="profile-stats">
+  <span><b>{{ profile_user.posts_count }}</b> posts</span>
+  <span><b>{{ profile_user.followers_count }}</b> followers</span>
+  <span><b>{{ profile_user.following_count }}</b> following</span>
+</div>
+
+<div class="feed-header" style="padding-top:0;">
+  <h2 style="font-size:1.1rem;">Posts</h2>
+</div>
+
+{% if posts %}
+  {% for post in posts %}
+    {{ m.post_card(post) }}
+  {% endfor %}
+{% else %}
+<div class="empty-state">
+  <h3>No posts yet</h3>
+  <p>{{ profile_user.username }} hasn't shared anything.</p>
+</div>
+{% endif %}
+
+{% endblock %}

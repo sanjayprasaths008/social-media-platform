@@ -1,0 +1,33 @@
+{% macro post_card(post) %}
+<div class="post">
+  <a class="avatar-ring {% if is_following(current_user, post.author) %}following{% endif %}" href="{{ url_for('profile', username=post.author.username) }}">
+    <div class="avatar avatar-md {{ post.author.avatar_class }}">{{ post.author.username[0]|upper }}</div>
+  </a>
+  <div class="post-main">
+    <div class="post-head">
+      <a class="name" href="{{ url_for('profile', username=post.author.username) }}">{{ post.author.username }}</a>
+      <span class="handle">@{{ post.author.username }}</span>
+      <span class="time">{{ post.created_at|timeago }}</span>
+    </div>
+    <a href="{{ url_for('post_detail', post_id=post.id) }}" style="text-decoration:none; color:inherit;">
+      <p class="post-content">{{ post.content }}</p>
+    </a>
+    <div class="post-actions">
+      <form method="POST" action="{{ url_for('toggle_like', post_id=post.id) }}">
+        <button type="submit" class="post-action {% if user_liked(post, current_user) %}liked{% endif %}">
+          <span class="icon">{% if user_liked(post, current_user) %}&#9829;{% else %}&#9825;{% endif %}</span>
+          {{ post.like_count }}
+        </button>
+      </form>
+      <a class="post-action" href="{{ url_for('post_detail', post_id=post.id) }}">
+        <span class="icon">&#9998;</span> {{ post.comment_count }}
+      </a>
+      {% if current_user.is_authenticated and current_user.id == post.user_id %}
+      <form method="POST" action="{{ url_for('delete_post', post_id=post.id) }}" style="margin-left:auto;">
+        <button type="submit" class="post-delete" onclick="return confirm('Delete this post?');">Delete</button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endmacro %}

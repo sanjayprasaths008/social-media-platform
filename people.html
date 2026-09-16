@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}People — LOOP{% endblock %}
+{% block content %}
+
+<div class="feed-header">
+  <span class="eyebrow">Discover</span>
+  <h1>People</h1>
+</div>
+
+<div class="people-grid">
+  {% for u in users %}
+  {% if not current_user.is_authenticated or u.id != current_user.id %}
+  <div class="person-card">
+    <a class="avatar-ring {% if is_following(current_user, u) %}following{% endif %}" href="{{ url_for('profile', username=u.username) }}">
+      <div class="avatar avatar-md {{ u.avatar_class }}">{{ u.username[0]|upper }}</div>
+    </a>
+    <div class="info">
+      <a href="{{ url_for('profile', username=u.username) }}"><h3>{{ u.username }}</h3></a>
+      <span class="handle">@{{ u.username }}</span>
+      <p>{{ u.bio or 'No bio yet.' }}</p>
+      {% if current_user.is_authenticated %}
+        <form method="POST" action="{{ url_for('toggle_follow', username=u.username) }}">
+          {% if is_following(current_user, u) %}
+            <button type="submit" class="btn btn-following btn-sm">Following</button>
+          {% else %}
+            <button type="submit" class="btn btn-violet btn-sm">Follow</button>
+          {% endif %}
+        </form>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>
+
+{% endblock %}

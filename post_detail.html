@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% import 'macros.html' as m with context %}
+{% block title %}Post — LOOP{% endblock %}
+{% block content %}
+
+<div style="padding-top:20px;">
+  <a href="{{ url_for('feed') }}" style="color:var(--muted); font-size:0.85rem;">&larr; Back to feed</a>
+</div>
+
+<div style="margin-top:16px;">
+  {{ m.post_card(post) }}
+</div>
+
+{% if current_user.is_authenticated %}
+<form method="POST" action="{{ url_for('add_comment', post_id=post.id) }}" class="comment-form">
+  <div class="avatar avatar-sm {{ current_user.avatar_class }}">{{ current_user.username[0]|upper }}</div>
+  <input type="text" name="content" placeholder="Write a comment..." maxlength="300" required>
+  <button type="submit" class="btn btn-violet btn-sm">Reply</button>
+</form>
+{% endif %}
+
+<div class="thread">
+  {% for comment in comments %}
+  <div class="thread-item">
+    <a class="avatar-ring {% if is_following(current_user, comment.author) %}following{% endif %}" href="{{ url_for('profile', username=comment.author.username) }}">
+      <div class="avatar avatar-sm {{ comment.author.avatar_class }}">{{ comment.author.username[0]|upper }}</div>
+    </a>
+    <div class="thread-body">
+      <a class="name" href="{{ url_for('profile', username=comment.author.username) }}">{{ comment.author.username }}</a>
+      <span class="time">{{ comment.created_at|timeago }}</span>
+      <p>{{ comment.content }}</p>
+    </div>
+  </div>
+  {% else %}
+  <p style="color:var(--muted); padding: 20px 0 0 60px; font-size:0.9rem;">No comments yet — say something.</p>
+  {% endfor %}
+</div>
+
+{% endblock %}

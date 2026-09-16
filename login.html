@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Login — LOOP{% endblock %}
+{% block content %}
+
+<div class="form-card">
+  <h2>Welcome back</h2>
+  <p class="sub">Log in to post, like, comment, and follow.</p>
+  <form method="POST">
+    <div class="field">
+      <label>Username</label>
+      <input type="text" name="username" required autofocus>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" name="password" required>
+    </div>
+    <button type="submit" class="btn btn-violet btn-block">Login</button>
+  </form>
+  <p class="form-foot">Don't have an account? <a href="{{ url_for('register') }}">Sign up</a></p>
+</div>
+
+{% endblock %}
